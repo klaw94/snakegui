@@ -16,6 +16,7 @@ class MyPanel extends JPanel implements ActionListener {
     int unitSize;
     public int numApples = 0;
     JLabel text;
+    boolean gameOver = false;
 
 
 
@@ -24,8 +25,8 @@ class MyPanel extends JPanel implements ActionListener {
         this.size = size;
         this.unitSize = unitSize;
         setBorder(BorderFactory.createLineBorder(Color.black));
-        createApple(size, unitSize);
-        snake = new Snake((int) Math.floor(Math.random()*size/unitSize)*unitSize, (int) Math.floor(Math.random()*size/unitSize)*unitSize, 4, 'U');
+        createApple();
+        snake = new Snake(50, 200, 4, 'U');
         this.setFocusable(true);
         this.requestFocusInWindow();
         this.addKeyListener(new MyKeyAdapter());
@@ -81,7 +82,7 @@ class MyPanel extends JPanel implements ActionListener {
     private void eatApple() {
         snake.grow();
         numApples++;
-        createApple(size, unitSize);
+        createApple();
         text.setText("Apples : " + numApples);
     }
 
@@ -93,31 +94,34 @@ class MyPanel extends JPanel implements ActionListener {
         //the borders of the visible Panel are not exactly 0 and 600, that's why the -25
         if((snake.headPosition[0] == -25 || snake.headPosition[0] > size) || (snake.headPosition[1] == -25 || snake.headPosition[1] >= height - 25)){
             timer.stop();
+            gameOver = true;
             text.setText("You Lost!");
         }
 
         for(int i = 1; i < snake.length; i++){
             if(snake.headPosition[0] == snake.snakePosition.get(i)[0] && snake.headPosition[1] == snake.snakePosition.get(i)[1]){
                 timer.stop();
+                gameOver = true;
                 text.setText("You Lost!");
             }
         }
     }
 
 
-    public void createApple(int size, int unitSize){
+    public void createApple(){
         applePosition[0] = (int) Math.floor(Math.random()*size/unitSize)*unitSize;
-        if (applePosition[0] > size){
-            applePosition[0] -= 25;
+        if (applePosition[0] >= 550){
+            applePosition[0] = 550 - 25;
         } else if (applePosition[0] <= 0) {
             applePosition[0] += 25;
         }
         applePosition[1] = (int) Math.floor(Math.random()*size/unitSize)*unitSize;
-        if (applePosition[1] < 0){
+        if (applePosition[1] <= 0){
             applePosition[1] += 25;
-        } else if (applePosition[1] > height - 25) {
-            applePosition[1] -= 25;
+        } else if (applePosition[1] >= 550) {
+            applePosition[1] = 550 - 25;
         }
+
     }
 
     @Override
@@ -141,6 +145,16 @@ class MyPanel extends JPanel implements ActionListener {
                     break;
                 case KeyEvent.VK_DOWN:
                     snake.changeDirection('D');
+                    break;
+                case KeyEvent.VK_SPACE:
+                    if (gameOver){
+                        snake = new Snake(50, 200, 4, 'U');
+                        startGame();
+                        numApples = 0;
+                        text.setText("Apples : " + numApples);
+                        createApple();
+                        gameOver = false;
+                    }
                     break;
             }
         }
