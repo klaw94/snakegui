@@ -59,7 +59,7 @@ class MyPanel extends JPanel implements ActionListener {
     }
 
     public void startGame(){
-        timer = new Timer(500, new ActionListener() {
+        timer = new Timer(100, new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 snake.move();
@@ -71,7 +71,7 @@ class MyPanel extends JPanel implements ActionListener {
             }
         });
         timer.setRepeats(true);
-        timer.setInitialDelay(0);
+        timer.setInitialDelay(100);
         timer.start();
     }
 
@@ -93,13 +93,13 @@ class MyPanel extends JPanel implements ActionListener {
         //the borders of the visible Panel are not exactly 0 and 600, that's why the -25
         if((snake.headPosition[0] == -25 || snake.headPosition[0] > size) || (snake.headPosition[1] == -25 || snake.headPosition[1] >= height - 25)){
             timer.stop();
-            JOptionPane.showMessageDialog(null, "You Lost");
+            text.setText("You Lost!");
         }
 
         for(int i = 1; i < snake.length; i++){
             if(snake.headPosition[0] == snake.snakePosition.get(i)[0] && snake.headPosition[1] == snake.snakePosition.get(i)[1]){
                 timer.stop();
-                JOptionPane.showMessageDialog(null, "You Lost");
+                text.setText("You Lost!");
             }
         }
     }
@@ -107,17 +107,15 @@ class MyPanel extends JPanel implements ActionListener {
 
     public void createApple(int size, int unitSize){
         applePosition[0] = (int) Math.floor(Math.random()*size/unitSize)*unitSize;
-        System.out.println("P0 is "+applePosition[0]);
-        if (applePosition[0] + 25 > size){
+        if (applePosition[0] > size){
             applePosition[0] -= 25;
         } else if (applePosition[0] <= 0) {
             applePosition[0] += 25;
         }
         applePosition[1] = (int) Math.floor(Math.random()*size/unitSize)*unitSize;
-        System.out.println("P1 is "+applePosition[1]);
         if (applePosition[1] < 0){
             applePosition[1] += 25;
-        } else if (applePosition[1] > height) {
+        } else if (applePosition[1] > height - 25) {
             applePosition[1] -= 25;
         }
     }
